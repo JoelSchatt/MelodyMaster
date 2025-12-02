@@ -1,4 +1,4 @@
-# This program was created in Arduino Lab for MicroPython
+# MelodyMaster
 from modulino import ModulinoBuzzer
 from modulino import ModulinoButtons
 import sh1106
@@ -17,10 +17,40 @@ class Level:
     self.speed = speed
     self.toneCount = toneCount
 
+running = True
 buttons = ModulinoButtons()
 buzzer = ModulinoBuzzer()
 display = sh1106.SH1106_I2C(128, 64, I2C(1))
 currentLevel = None
+
+# Kurze Victory Melodie
+short_victory = [
+    (ModulinoBuzzer.NOTES["C5"], 100),
+    (ModulinoBuzzer.NOTES["E5"], 100),
+    (ModulinoBuzzer.NOTES["G5"], 100),
+    (ModulinoBuzzer.NOTES["C6"], 300)
+]
+
+# Lange Victory Melodie
+long_victory = [
+    (ModulinoBuzzer.NOTES["G4"], 150),
+    (ModulinoBuzzer.NOTES["C5"], 150),
+    (ModulinoBuzzer.NOTES["E5"], 150),
+    (ModulinoBuzzer.NOTES["G5"], 300),
+    (ModulinoBuzzer.NOTES["REST"], 50),
+    (ModulinoBuzzer.NOTES["E5"], 150),
+    (ModulinoBuzzer.NOTES["G5"], 300),
+    (ModulinoBuzzer.NOTES["REST"], 50),
+    (ModulinoBuzzer.NOTES["C5"], 150),
+    (ModulinoBuzzer.NOTES["E5"], 150),
+    (ModulinoBuzzer.NOTES["G5"], 150),
+    (ModulinoBuzzer.NOTES["C6"], 450)
+]
+
+# Kurze Lose Melodie
+short_lose = [
+    (ModulinoBuzzer.NOTES["CS4"], 800)
+]
   
 # Functions to show LED and play tone on buzzer
 def a_tone_light():
@@ -78,6 +108,11 @@ def waitForRandomButtonPressed():
     buttons.update()
   return 
 
+def playMelody(melody):
+  for note, duration in melody:
+    buzzer.tone(note, duration, blocking=True)
+  
+
 level1 = Level(1, 0.5, 1)
 level2 = Level(2, 0.1, 1)
 level3 = Level(3, 0.5, 1)
@@ -95,7 +130,7 @@ display.show()
 
 sleep(2)
 
-while True:
+while running:
   # Initialize Variables
   check_index = 0
   random_numbers = []
@@ -106,15 +141,13 @@ while True:
   buttons.on_button_a_release = None
   buttons.on_button_b_release = None
   buttons.on_button_c_release = None
-
-  print(random_numbers)
   
   # Create random sequence
   for i in range(currentLevel.toneCount):
     random_numbers.append(random.randint(1,3))
 
-  print(random_numbers)
-  print(currentLevel.levelNumber)
+  print(random_numbers) # TODO Remove
+  
   # Create object for each button
   button_a = Button(ModulinoBuzzer.NOTES["C5"])
   button_b = Button(ModulinoBuzzer.NOTES["E5"])
@@ -178,20 +211,17 @@ while True:
   display.text("the melody!", 25, 30, 1)
   display.show()
   
-  while True:
+  while running:
     buttons.update()
     if failed == True:
-      print("You failed!") # TODO Remove
       display.fill(0)
       display.text("!!WRONG!!", 30, 20, 1)
       display.text("try again", 30, 30, 1)
       display.text(";D", 55, 40, 1)
       display.show()
       buttons.set_led_status(True, True, True)
-      buzzer.tone(ModulinoBuzzer.NOTES["CS4"])
-      sleep(0.7)
-      buzzer.no_tone()
-      sleep(1.3)
+      playMelody(short_lose)
+      sleep(2)
       buttons.set_led_status(False, False, False)
       nextLevel = currentLevel
       break
@@ -204,6 +234,8 @@ while True:
         display.text("MASTERED", 35, 25, 1)
         display.text(";D", 55, 45, 1)
         display.show()
+        sleep(0.5)
+        playMelody(short_victory)
         sleep(2)
         nextLevel = levels[currentLevel.levelNumber]
       else:
@@ -213,7 +245,11 @@ while True:
         display.text("the melody", 30, 35, 1)
         display.text(";D", 55, 45, 1)
         display.show()
+        sleep(0.5)
+        playMelody(long_victory)
+        sleep(10
+        # TODO Play again?
         # ends the program
-        sys.exit()
+        running = False
       break
      
