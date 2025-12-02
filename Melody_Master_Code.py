@@ -6,44 +6,41 @@ from machine import I2C
 from time import sleep
 import random
 
+# Button class to append tone attribute to button
 class Button:
   def __init__(self, tone):
     self.tone = tone
-
-# Initialize Variables
-check_index = 0
-random_numbers = []
-failed = False
-
-# Create random sequence
-for i in range(3):
-  random_numbers.append(random.randint(1,3))
-
-# Button class to append tone attribute to button
+    
+class Level:
+  def __init__(self, levelNumber, speed, toneCount):
+    self.levelNumber = levelNumber
+    self.speed = speed
+    self.toneCount = toneCount
 
 buttons = ModulinoButtons()
 buzzer = ModulinoBuzzer()
 display = sh1106.SH1106_I2C(128, 64, I2C(1))
-
+currentLevel = None
+  
 # Functions to show LED and play tone on buzzer
 def a_tone_light():
   buttons.set_led_status(True, False, False)
   buzzer.tone(button_a.tone)
-  sleep(0.4)
+  sleep(currentLevel.speed)
   buzzer.no_tone()
   buttons.set_led_status(False, False, False)
 
 def b_tone_light():
   buttons.set_led_status(False, True, False)
   buzzer.tone(button_b.tone)
-  sleep(0.4)
+  sleep(currentLevel.speed)
   buzzer.no_tone()
   buttons.set_led_status(False, False, False)
 
 def c_tone_light():
   buttons.set_led_status(False, False, True)
   buzzer.tone(button_c.tone)
-  sleep(0.4)
+  sleep(currentLevel.speed)
   buzzer.no_tone()
   buttons.set_led_status(False, False, False)
 
@@ -80,12 +77,14 @@ def waitForRandomButtonPressed():
   while not buttons.button_a_pressed and not buttons.button_b_pressed and not buttons.button_c_pressed:
     buttons.update()
   return 
-  
 
-# Create object for each button
-button_a = Button(ModulinoBuzzer.NOTES["C5"])
-button_b = Button(ModulinoBuzzer.NOTES["E5"])
-button_c = Button(ModulinoBuzzer.NOTES["G5"])
+level1 = Level(1, 0.5, 1)
+level2 = Level(2, 0.1, 1)
+level3 = Level(3, 0.5, 1)
+
+levels = [level1, level2, level3]
+
+nextLevel = levels[0]
 
 # Display welcome
 display.fill(0)                   
@@ -96,82 +95,125 @@ display.show()
 
 sleep(2)
 
-# Ersten Text löschen
-display.fill(0)
-display.show()
-
-display.fill(0)                   
-display.text("To start game:", 12, 15, 1)
-display.text("press random", 17, 25, 1)
-display.text("button", 40, 35, 1)
-display.show()
-
-waitForRandomButtonPressed()
-
-display.fill(0)
-display.show()
-
-# TODO add countdown before Start
-sleep(3)
-
-# update button to reset random button input
-buttons.update()
-
-
-display.fill(0)
-display.text("memorize this", 15, 20, 1)
-display.text("melody!", 40, 30, 1)
-display.show()
-
-# Play random sequence to memorize
-for i in random_numbers:
-  if i == 1:
-    a_tone_light()
-  elif i == 2:
-    b_tone_light()
-  elif i == 3:
-    c_tone_light()
-  sleep(0.5)
-
-# Create release events
-buttons.on_button_a_release = on_a_release
-buttons.on_button_b_release = on_b_release
-buttons.on_button_c_release = on_c_release
-
-display.fill(0)
-display.show()
-
-display.fill(0)
-display.text("play back", 30, 20, 1)
-display.text("the melody!", 25, 30, 1)
-display.show()
-
 while True:
+  # Initialize Variables
+  check_index = 0
+  random_numbers = []
+  failed = False
+  currentLevel = nextLevel
+
+  # Remove callbacks
+  buttons.on_button_a_release = None
+  buttons.on_button_b_release = None
+  buttons.on_button_c_release = None
+
+  print(random_numbers)
+  
+  # Create random sequence
+  for i in range(currentLevel.toneCount):
+    random_numbers.append(random.randint(1,3))
+
+  print(random_numbers)
+  print(currentLevel.levelNumber)
+  # Create object for each button
+  button_a = Button(ModulinoBuzzer.NOTES["C5"])
+  button_b = Button(ModulinoBuzzer.NOTES["E5"])
+  button_c = Button(ModulinoBuzzer.NOTES["G5"])
+  
+  display.fill(0)                   
+  display.text(f"Level {currentLevel.levelNumber}", 30, 10, 1)
+  display.text("press any", 23, 25, 1)
+  display.text("button to", 23, 35, 1)
+  display.text("start", 40, 45, 1)
+
+  display.show()
+  
+  waitForRandomButtonPressed()
+  
+  # countdown before Start
+  display.fill(0) 
+  display.text("get ready!", 25, 17, 1)
+  display.text("3", 55, 40, 1)
+  display.show()
+  sleep(1)
+  
+  display.fill(0) 
+  display.text("get ready!", 25, 17, 1)
+  display.text("2", 55, 40, 1)
+  display.show()
+  sleep(1)
+  
+  display.fill(0) 
+  display.text("get ready!", 25, 17, 1)
+  display.text("1", 55, 40, 1)
+  display.show()
+  sleep(1)
+  
+  # update button to reset random button input
   buttons.update()
-  if failed == True:
-    print("You failed!")
-    display.fill(0)
-    display.show()
-    display.fill(0)
-    display.text("!!WRONG!!", 30, 20, 1)
-    display.text("try again", 30, 30, 1)
-    display.text(";D", 55, 40, 1)
-    display.show()
-    buttons.set_led_status(True, True, True)
-    buzzer.tone(ModulinoBuzzer.NOTES["CS4"])
-    sleep(0.7)
-    buzzer.no_tone()
-    buttons.set_led_status(False, False, False)
-    break
-  elif check_index == len(random_numbers):
-    display.fill(0)
-    display.show()
-    display.fill(0)
-    display.text("CONGRATS", 35, 15, 1)
-    display.text("you MASTERED", 20, 25, 1)
-    display.text("the melody", 30, 35, 1)
-    display.text(";D", 55, 45, 1)
-    display.show()
-    print("Congratulations, you won!")
-    break
-   
+  
+  
+  display.fill(0)
+  display.text("memorize this", 15, 20, 1)
+  display.text("melody!", 40, 30, 1)
+  display.show()
+  
+  # Play random sequence to memorize
+  for i in random_numbers:
+    if i == 1:
+      a_tone_light()
+    elif i == 2:
+      b_tone_light()
+    elif i == 3:
+      c_tone_light()
+    sleep(currentLevel.speed)
+  
+  # Create release callbacks
+  buttons.on_button_a_release = on_a_release
+  buttons.on_button_b_release = on_b_release
+  buttons.on_button_c_release = on_c_release
+  
+  display.fill(0)
+  display.text("play back", 30, 20, 1)
+  display.text("the melody!", 25, 30, 1)
+  display.show()
+  
+  while True:
+    buttons.update()
+    if failed == True:
+      print("You failed!") # TODO Remove
+      display.fill(0)
+      display.text("!!WRONG!!", 30, 20, 1)
+      display.text("try again", 30, 30, 1)
+      display.text(";D", 55, 40, 1)
+      display.show()
+      buttons.set_led_status(True, True, True)
+      buzzer.tone(ModulinoBuzzer.NOTES["CS4"])
+      sleep(0.7)
+      buzzer.no_tone()
+      sleep(1.3)
+      buttons.set_led_status(False, False, False)
+      nextLevel = currentLevel
+      break
+    elif check_index == len(random_numbers):
+      # reset last button press
+      buttons.update();
+      if currentLevel.levelNumber < len(levels):
+        display.fill(0)
+        display.text(f"Level {currentLevel.levelNumber}", 38, 15, 1)
+        display.text("MASTERED", 35, 25, 1)
+        display.text(";D", 55, 45, 1)
+        display.show()
+        sleep(2)
+        nextLevel = levels[currentLevel.levelNumber]
+      else:
+        display.fill(0)
+        display.text("CONGRATS", 35, 15, 1)
+        display.text("you MASTERED", 20, 25, 1)
+        display.text("the melody", 30, 35, 1)
+        display.text(";D", 55, 45, 1)
+        display.show()
+        # ends the program
+        sys.exit()
+      break
+     
