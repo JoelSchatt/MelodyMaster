@@ -113,11 +113,12 @@ def playMelody(melody):
     buzzer.tone(note, duration, blocking=True)
   
 
-level1 = Level(1, 0.5, 1)
-level2 = Level(2, 0.1, 1)
-level3 = Level(3, 0.5, 1)
+level1 = Level(1, 0.4, 4)
+level2 = Level(2, 0.4, 6)
+level3 = Level(3, 0.2, 7)
+level4 = Level(4, 0.4, 8)
 
-levels = [level1, level2, level3]
+levels = [level1, level2, level3, level4]
 
 nextLevel = levels[0]
 
@@ -247,9 +248,11 @@ while running:
         display.show()
         sleep(0.5)
         playMelody(long_victory)
-        sleep(10
+        sleep(10)
         # TODO Play again?
         # ends the program
         running = False
       break
+
+      
      
