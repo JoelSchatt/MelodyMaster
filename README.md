@@ -8,7 +8,7 @@
 3. Start level
 4. Memorize the melody
 5. Replay the melody
-6. Level up! Have fun :``)``
+6. Level up! Have fun :)
 ## Requirements
 To build this project you will need:
 
