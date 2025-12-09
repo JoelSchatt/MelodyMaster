@@ -3,7 +3,12 @@
 
 ## Concept
 ### How to Play
-
+1. Start code on the Arduino
+2. Follow the instructions on screen
+3. Start level
+4. Memorize the melody
+5. Replay the melody
+6. Level up! Have fun :``)``
 ## Requirements
 To build this project you will need:
 
