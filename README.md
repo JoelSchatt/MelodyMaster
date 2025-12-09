@@ -3,6 +3,7 @@
 
 ## Concept
 ### How to Play
+
 ## Requirements
 To build this project you will need:
 
@@ -21,14 +22,13 @@ To build this project you will need:
 ### Libraries
 * [MicroPython-Button](https://github.com/ubidefeo/MicroPython-Button)
 * [MicroPython I2C 16x2 LCD driver](https://github.com/ubidefeo/micropython-i2c-lcd)
-* ...
 
 ## How to build
 ### Wiring
-Add here a photo or diagram about how to connect the components
+![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
 ### Uploading the code
-* Copy the content of your `src` from your computer to your board
+* Copy the file `Melody_Master_Code.py` of the folder `src` from your computer to your board (can be done in Arduino Lab for MicroPython)
+* Rename the file `Melody_Master_Code.py` to `main.py` to start the game automatically, when the arduino is plugged in **OR** start the code manually via Arduino Lab for MicroPython
 * Install the libraries listed above
-* ...
 ### Feedback and questions
 If you are interested in this project and need to ask questions get in touch with us over Instagram/TikTok/etc/etc
