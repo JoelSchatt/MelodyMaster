@@ -25,7 +25,7 @@ To build this project you will need:
 
 ## How to build
 ### Wiring
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+![wiring description image](https://github.com/JoelSchatt/MelodyMaster/blob/main/img/Wiring.png?raw=true)
 ### Uploading the code
 * Copy the file `Melody_Master_Code.py` of the folder `src` from your computer to your board (can be done in Arduino Lab for MicroPython)
 * Rename the file `Melody_Master_Code.py` to `main.py` to start the game automatically, when the arduino is plugged in **OR** start the code manually via Arduino Lab for MicroPython
