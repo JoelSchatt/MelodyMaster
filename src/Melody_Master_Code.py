@@ -102,6 +102,7 @@ def on_c_release():
   else:
     failed = True
 
+# Function to wait for user-input
 def waitForRandomButtonPressed():
   buttons.update()
   while not buttons.button_a_pressed and not buttons.button_b_pressed and not buttons.button_c_pressed:
@@ -112,7 +113,7 @@ def playMelody(melody):
   for note, duration in melody:
     buzzer.tone(note, duration, blocking=True)
   
-
+#Level creation
 level1 = Level(1, 0.4, 4)
 level2 = Level(2, 0.4, 6)
 level3 = Level(3, 0.2, 7)
@@ -130,6 +131,9 @@ display.text("XD", 55, 37, 1)
 display.show()
 
 sleep(2)
+
+
+# ===== MAIN-GAME-LOOP =====
 
 while running:
   # Initialize Variables
@@ -253,6 +257,3 @@ while running:
         # ends the program
         running = False
       break
-
-      
-     
